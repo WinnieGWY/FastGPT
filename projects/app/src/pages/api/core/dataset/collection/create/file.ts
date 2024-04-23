@@ -66,7 +66,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       insertLen: predictDataLimitLength(trainingType, chunks)
     });
 
-    await mongoSessionRun(async (session) => {
+    const collectionId = await mongoSessionRun(async (session) => {
       // 4. create collection
       const { _id: collectionId } = await createOneCollection({
         ...body,
@@ -141,7 +141,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     startTrainingQueue(true);
 
-    jsonRes(res);
+    jsonRes(res, {
+      data: collectionId
+    });
   } catch (error) {
     jsonRes(res, {
       code: 500,
